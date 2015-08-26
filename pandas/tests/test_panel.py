@@ -1507,19 +1507,19 @@ class TestPanel(tm.TestCase, PanelTests, CheckIndexing,
 
     def test_to_frame(self):
         # filtered
-        filtered = self.panel.to_frame()
+        filtered = self.panel.to_frame(dropna=True)
         expected = self.panel.to_frame().dropna(how='any')
         assert_frame_equal(filtered, expected)
 
         # unfiltered
-        unfiltered = self.panel.to_frame(filter_observations=False)
+        unfiltered = self.panel.to_frame(dropna=False)
         assert_panel_equal(unfiltered.to_panel(), self.panel)
 
         # names
         self.assertEqual(unfiltered.index.names, ('major', 'minor'))
 
         # unsorted, round trip
-        df = self.panel.to_frame(filter_observations=False)
+        df = self.panel.to_frame(dropna=False)
         unsorted = df.take(np.random.permutation(len(df)))
         pan = unsorted.to_panel()
         assert_panel_equal(pan, self.panel)
@@ -2192,7 +2192,7 @@ class TestLongPanel(tm.TestCase):
         tm.add_nans(panel)
 
         self.panel = panel.to_frame()
-        self.unfiltered_panel = panel.to_frame(filter_observations=False)
+        self.unfiltered_panel = panel.to_frame(dropna=False)
 
     def test_ops_differently_indexed(self):
         # trying to set non-identically indexed panel
